@@ -17,3 +17,17 @@ I have developed this project to demonstrate my skills in **Backend Development*
 * **Framework:** FastAPI
 * **AI:** Google Gemini API
 * **Database:** SQLite
+
+## ⚙️ How to run it locally
+
+1. **Clone the repo:**
+   `git clone https://github.com/JepsXR/Finai-example.git`
+
+2. **Install dependencies:**
+   `pip install fastapi uvicorn google-generativeai python-dotenv`
+
+3. **Set up your environment:**
+   Create a `.env` file and add your `API_KEY`.
+
+4. **Run the server:**
+   `uvicorn main:app --reload`
