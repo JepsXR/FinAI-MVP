@@ -12,7 +12,7 @@ import sqlite3
 
 app = FastAPI(
     title="FinAI agent",
-    description="Fin it's a agent that explain financial terms to people in a simple way ",
+    description="Fin it's a agent that explains financial terms to people in a simple way ",
     version="1.0.0"
 )
 
@@ -23,7 +23,7 @@ if keymaster is None:
     print("Ups....don't find api key")
 else:
     genai.configure(api_key=keymaster)
-    print("Sucessfull connection")
+    print("Successful connection")
 
 # Step 3: CONNECTION WITH A DATABASE
 
@@ -34,5 +34,5 @@ cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name T
 cursor.execute("INSERT INTO users (name) VALUES ('Your name')")
 
 connection.commit()
-print("¡Data saved sucessfully!")
+print("¡Data saved successfully!")
 connection.close()
