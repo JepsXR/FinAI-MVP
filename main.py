@@ -12,7 +12,7 @@ import sqlite3
 
 app = FastAPI(
     title="FinAI agent",
-    description="Fin it's a agent that explains financial terms to people in a simple way ",
+    description="Fin it's a agent that explain financial terms to people in a simple way ",
     version="1.0.0"
 )
 
@@ -23,16 +23,26 @@ if keymaster is None:
     print("Ups....don't find api key")
 else:
     genai.configure(api_key=keymaster)
-    print("Successful connection")
+    print("Sucessfull connection")
 
-# Step 3: CONNECTION WITH A DATABASE
+# Step 3: DATABASE CONNECTION AND CREATION OF ITS ARCHITECTURE
 
-connection = sqlite3.connect('database')
+connection = sqlite3.connect('fin_ai.db')
 cursor = connection.cursor()
 
-cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)")
-cursor.execute("INSERT INTO users (name) VALUES ('Your name')")
+fin_table_sql = """
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,              
+    name TEXT UNIQUE NOT NULL,
+    age INTEGER
+    test_score INTEGER DEFAULT 0
+    risk_profile TEXT DEFAULT 'waiting'
+)
+"""
 
+cursor.execute(fin_table_sql)
 connection.commit()
-print("¡Data saved successfully!")
+print("¡Data saved sucessfully!")
 connection.close()
+
+# STEP 4: CREATION OF ENDPOINTS
