@@ -34,8 +34,8 @@ fin_table_sql = """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,              
     name TEXT UNIQUE NOT NULL,
-    age INTEGER
-    test_score INTEGER DEFAULT 0
+    age INTEGER,
+    test_score INTEGER DEFAULT 0,
     risk_profile TEXT DEFAULT 'waiting'
 )
 """
@@ -44,5 +44,3 @@ cursor.execute(fin_table_sql)
 connection.commit()
 print("¡Data saved sucessfully!")
 connection.close()
-
-# STEP 4: CREATION OF ENDPOINTS
