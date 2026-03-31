@@ -1,7 +1,7 @@
 # Step 1: IMPORT
 
 from fastapi import FastAPI, HTTPException
-from typing import List, Optional
+from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -28,11 +28,21 @@ else:
 # Step 3: CREATION OF DATA MODELS
 
 class DataUsers(BaseModel):
-    name: str
+    name: str = Field(..., min_length=3, max_length=20)
     age: int = Field(..., gt=0, lt=100)
-    type_employment: str
-    type_worker: str
-    stratum_number: int 
+    type_employment: Literal["Formal", "Informal", "Unemployed","Student"] = Field(...)
+    type_worker: Literal["Independent", "Employee", "Entrepreneur", "Businessman"] = Field(...)
+    stratum_number: int = Field(..., ge=0, le=6)
+    monthly_income: int = Field(
+        ..., 
+        ge=0,
+        description="Total monthly income in Colombian pesos (COP)",
+        example=1200000)
+    essential_expenses: int = Field(
+        ..., 
+        ge=0,
+        description="Total monthly expenses in Colombian pesos (COP)")
+    income_frequency: Literal["Fixed", "Variable"] = Field(...)
 
 # Step 4: DATABASE CONNECTION AND CREATION OF ITS ARCHITECTURE
 
@@ -42,11 +52,14 @@ cursor = connection.cursor()
 fin_table_sql = """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,              
-    name TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
     age INTEGER,
     type_employment TEXT,
     type_worker TEXT,
     stratum_number INTEGER,
+    income_frequency TEXT,
+    monthly_income INTEGER,
+    essential_expenses INTEGER, 
     test_score INTEGER DEFAULT 0,
     risk_profile TEXT DEFAULT 'waiting'
 )
