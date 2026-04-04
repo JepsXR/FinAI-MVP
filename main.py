@@ -69,3 +69,15 @@ cursor.execute(fin_table_sql)
 connection.commit()
 print("¡Data saved sucessfully!")
 connection.close()
+
+# STEP 5: CREATION OF ENDPOINTS 
+
+@app.post("/users", status_code=201)
+async def register_new_user(user: DataUsers):
+    """
+**Financial Profile Registration and Persistence**
+Captures essential socioeconomic data of the citizen (income, expenses, socioeconomic stratum, and type of employment)
+and stores it in a structured format in the SQLite database.
+* **Validation:** Ensures that the amounts are positive and the age/stratum ranges are valid.
+* **Output:** Returns the user's unique ID for future analysis queries.
+"""
