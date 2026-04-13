@@ -53,15 +53,15 @@ fin_table_sql = """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,              
     name TEXT NOT NULL,
-    age INTEGER,
-    type_employment TEXT,
-    type_worker TEXT,
-    stratum_number INTEGER,
-    income_frequency TEXT,
-    monthly_income INTEGER,
-    essential_expenses INTEGER, 
-    test_score INTEGER DEFAULT 0,
-    risk_profile TEXT DEFAULT 'waiting'
+    age INTEGER NOT NULL,
+    type_employment TEXT NOT NULL,
+    type_worker TEXT NOT NULL,
+    stratum_number INTEGER NOT NULL,
+    income_frequency TEXT NOT NULL,
+    monthly_income INTEGER NOT NULL,
+    essential_expenses INTEGER NOT NULL, 
+    test_score INTEGER NOT NULL DEFAULT 0,
+    risk_profile TEXT NOT NULL DEFAULT 'waiting'
 )
 """
 
