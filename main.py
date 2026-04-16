@@ -81,3 +81,23 @@ and stores it in a structured format in the SQLite database.
 * **Validation:** Ensures that the amounts are positive and the age/stratum ranges are valid.
 * **Output:** Returns the user's unique ID for future analysis queries.
 """
+
+# EXTRA STEP: CONNECT AGAIN THE DATABASE
+
+    try:
+        conn = sqlite3.connect('fin_ai.db')
+        cursor = conn.cursor()
+        
+    query = """
+    INSERT INTO users (
+    name, age, type_employment, type_worker, stratum_number,
+    income_frequency, monthly_income, essential_expenses
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+"""
+    values = (
+        user.name, user.age, user.type_employment, user.type_worker, user.stratum_number,
+        user.income_frequency, user.monthly_income, user.essential_expenses
+        )
+    cursor.execute(query, values)
+    conn.commit()
+
