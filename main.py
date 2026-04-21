@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 import os
 import sqlite3
+import logging
 
 # Step 2: SERVER ACTIVATION
 
@@ -25,13 +26,15 @@ else:
     genai.configure(api_key=keymaster)
     print("Sucessfull connection")
 
+logging.basicConfig(level=logging.INFO)
+
 # Step 3: CREATION OF DATA MODELS
 
 class DataUsers(BaseModel):
     name: str = Field(..., min_length=3, max_length=20)
     age: int = Field(..., gt=0, lt=100)
     type_employment: Literal["Formal", "Informal", "Unemployed","Student"] = Field(...)
-    type_worker: Literal["Independent", "Employee", "Entrepreneur", "Businessman"] = Field(...)
+    type_worker: Literal["Independent", "Employee", "Entrepreneur", "Businessman", "Student"] = Field(...)
     stratum_number: int = Field(..., ge=0, le=6)
     monthly_income: int = Field(
         ..., 
@@ -70,7 +73,7 @@ connection.commit()
 print("¡Data saved sucessfully!")
 connection.close()
 
-# STEP 5: CREATION OF ENDPOINTS 
+# STEP 5: CREATION OF REGISTER ENDPOINT
 
 @app.post("/users", status_code=201)
 async def register_new_user(user: DataUsers):
@@ -88,16 +91,35 @@ and stores it in a structured format in the SQLite database.
         conn = sqlite3.connect('fin_ai.db')
         cursor = conn.cursor()
         
-    query = """
-    INSERT INTO users (
-    name, age, type_employment, type_worker, stratum_number,
-    income_frequency, monthly_income, essential_expenses
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-"""
-    values = (
-        user.name, user.age, user.type_employment, user.type_worker, user.stratum_number,
-        user.income_frequency, user.monthly_income, user.essential_expenses
+        query = """
+        INSERT INTO users (
+            name, age, type_employment, type_worker, stratum_number,
+            income_frequency, monthly_income, essential_expenses
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        
+        values = (
+            user.name, 
+            user.age, 
+            user.type_employment, 
+            user.type_worker, 
+            user.stratum_number,
+            user.income_frequency, 
+            user.monthly_income, 
+            user.essential_expenses
         )
-    cursor.execute(query, values)
-    conn.commit()
+        
+        cursor.execute(query, values)
+        conn.commit()
+        
+        new_id = cursor.lastrowid
+        conn.close()
+        
+        return {"message": "User Created", "id": new_id}
 
+    except Exception as e:
+        
+        raise HTTPException(
+            status_code=500, 
+            detail="Error interno del servidor al crear el usuario."
+        )
