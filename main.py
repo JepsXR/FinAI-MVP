@@ -8,6 +8,7 @@ import google.generativeai as genai
 import os
 import sqlite3
 import logging
+import json
 
 # Step 2: SERVER ACTIVATION
 
@@ -73,7 +74,7 @@ connection.commit()
 print("¡Data saved sucessfully!")
 connection.close()
 
-# STEP 5: CREATION OF REGISTER ENDPOINT
+# STEP 5: LOG ENDPOINT CREATION
 
 @app.post("/users", status_code=201)
 async def register_new_user(user: DataUsers):
@@ -84,8 +85,6 @@ and stores it in a structured format in the SQLite database.
 * **Validation:** Ensures that the amounts are positive and the age/stratum ranges are valid.
 * **Output:** Returns the user's unique ID for future analysis queries.
 """
-
-# EXTRA STEP: CONNECT AGAIN THE DATABASE
 
     try:
         conn = sqlite3.connect('fin_ai.db')
@@ -123,3 +122,27 @@ and stores it in a structured format in the SQLite database.
             status_code=500, 
             detail="Error interno del servidor al crear el usuario."
         )
+
+# STEP 6: FINAI ANALYSIS ENGINE
+
+@app.get("/users/{user_id}/advice")
+async def generate_financial_advice(user_id: int):
+    """
+    **FinAI Core Engine**
+    Fetches user data, sends it to Gemini with strict socioeconomic context rules,
+    updates the database with the generated score/profile, and returns the advice.
+    """
+    try:
+        conn = sqlite3.connect('fin_ai.db')
+        cursor = conn.cursor()
+        
+        # 1. Buscar el expediente del usuario en el archivero
+        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        user_data = cursor.fetchone()
+        
+        if not user_data:
+            conn.close()
+            raise HTTPException(status_code=404, detail="Usuario no encontrado en la base de datos.")
+
+        column_names = [description[0] for description in cursor.description]
+        user_dict = dict(zip(column_names, user_data))
