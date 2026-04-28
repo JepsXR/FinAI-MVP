@@ -136,7 +136,6 @@ async def generate_financial_advice(user_id: int):
         conn = sqlite3.connect('fin_ai.db')
         cursor = conn.cursor()
         
-        # 1. Buscar el expediente del usuario en el archivero
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         user_data = cursor.fetchone()
         
@@ -146,3 +145,35 @@ async def generate_financial_advice(user_id: int):
 
         column_names = [description[0] for description in cursor.description]
         user_dict = dict(zip(column_names, user_data))
+
+        prompt = f"""
+        Eres FinAI, un asesor financiero empático, realista y muy humano de Colombia.
+        Tu objetivo es analizar el perfil socioeconómico de este usuario y darle un consejo práctico.
+        
+        REGLAS ESTRICTAS DE FINAI:
+        1. Tu concepto de "Riesgo" no es invertir en la bolsa. "Riesgo" significa vulnerabilidad socioeconómica (ingresos inestables o bajos, trabajo informal, gastos muy pegados a los ingresos).
+        2. Tu concepto de "Seguridad" significa estabilidad (ingresos fijos, trabajo formal, capacidad real de ahorro).
+        3. Usa un lenguaje universal, cercano y sencillo. Cero jerga de Wall Street. Que te entienda perfectamente desde una madre cabeza de hogar en un barrio popular hasta un ejecutivo.
+        4. Sé alentador pero realista con lo que tienen. No recomiendes inversiones locas si su margen de ahorro es mínimo.
+        
+        DATOS DEL USUARIO:
+        - Nombre: {user_dict['name']}
+        - Edad: {user_dict['age']}
+        - Tipo de Empleo: {user_dict['type_employment']}
+        - Tipo de Trabajador: {user_dict['type_worker']}
+        - Estrato: {user_dict['stratum_number']}
+        - Ingresos Mensuales: {user_dict['monthly_income']} ({user_dict['income_frequency']})
+        - Gastos Fijos: {user_dict['essential_expenses']}
+        
+        Devuelve ÚNICAMENTE un JSON válido con esta estructura exacta, sin texto adicional ni formato markdown:
+        {{
+            "test_score": (Calcula un número del 0 al 100, donde 0 es máxima vulnerabilidad/riesgo y 100 es máxima estabilidad),
+            "risk_profile": (Asigna una de estas tres palabras según el score: "Vulnerable", "Estable", o "Sólido"),
+            "advice": (Tu consejo financiero de 2 o 3 párrafos cortos, aplicando las reglas)
+        }}
+        """
+
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
+
+        
