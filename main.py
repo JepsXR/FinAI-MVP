@@ -176,4 +176,11 @@ async def generate_financial_advice(user_id: int):
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
 
-        
+        clean_json = response.text.replace("```json","").replace("```","").strip()
+        finai_analysis = json.loads(clean_json)
+
+        update_query = """
+        UPDATE users
+        SET test_score = ?, risk_profile = ?
+        WHERE id = ? 
+        """
