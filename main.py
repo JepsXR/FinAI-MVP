@@ -190,3 +190,15 @@ async def generate_financial_advice(user_id: int):
                        )
         conn.commit()
         conn.close()
+
+        return {
+            "usuario": user_dict['name'],
+            "analisis": finai_analysis
+        }
+
+    except Exception as e:
+        logging.error(f"Error en el motor de FinAI {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Error, procesando el analisis con FinAI"
+        )
