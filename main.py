@@ -184,3 +184,9 @@ async def generate_financial_advice(user_id: int):
         SET test_score = ?, risk_profile = ?
         WHERE id = ? 
         """
+
+        cursor.execute(update_query,
+                       (finai_analysis['test_score'], finai_analysis['risk_profile'], user_id)
+                       )
+        conn.commit()
+        conn.close()
