@@ -173,7 +173,7 @@ async def generate_financial_advice(user_id: int):
         }}
         """
 
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
 
         clean_json = response.text.replace("```json","").replace("```","").strip()
