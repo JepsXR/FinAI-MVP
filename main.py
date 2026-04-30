@@ -114,7 +114,7 @@ and stores it in a structured format in the SQLite database.
         new_id = cursor.lastrowid
         conn.close()
         
-        return {"message": "User Created", "id": new_id}
+        return {"mensaje": "Usuario Creado", "id": new_id}
 
     except Exception as e:
         
@@ -135,7 +135,7 @@ async def generate_financial_advice(user_id: int):
     try:
         conn = sqlite3.connect('fin_ai.db')
         cursor = conn.cursor()
-        
+
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         user_data = cursor.fetchone()
         
@@ -175,6 +175,10 @@ async def generate_financial_advice(user_id: int):
 
         model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
+
+        print("\n--- RESPUESTA CRUDA DE GEMINI ---")
+        print(response.text)
+        print("---------------------------------\n")
 
         clean_json = response.text.replace("```json","").replace("```","").strip()
         finai_analysis = json.loads(clean_json)
