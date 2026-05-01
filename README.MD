@@ -21,7 +21,7 @@ I have developed this project to demonstrate my skills in **Backend Development*
 ## ⚙️ How to run it locally
 
 1. **Clone the repo:**
-   `git clone https://github.com/JepsXR/Finai-example.git`
+   `git clone https://github.com/JepsXR/FinAI-MVP
 
 2. **Install dependencies:**
    `pip install fastapi uvicorn google-generativeai python-dotenv`
